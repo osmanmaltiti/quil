@@ -24,8 +24,10 @@ a {
   grid-template-columns: 4rem 1fr;
   place-items: center;
 }
-.main-card{
-  box-shadow: 0 0 3px 0.5px rgba(208, 208, 208, 0.911);
+
+.main-card:first-of-type{
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
 }
 
 #quil-content::-webkit-scrollbar{
@@ -35,4 +37,25 @@ a {
   content: '.';
   margin-top: 1rem;
   visibility: hidden;
+}
+
+.open-quil{
+  top: -2.5rem;
+  left: -1rem; 
+}
+.open-image{
+  top: -0.75rem;
+  left: -3rem; 
+}
+.open-video{
+  top: 2rem;
+  left: -3rem; 
+}
+.open-mic{
+  top: 3.5rem;
+  left: -1rem; 
+}
+
+.dialog-bg{
+  background-color: rgba(0, 0, 0, 0.685);
 }
