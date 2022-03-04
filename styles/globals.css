@@ -30,6 +30,7 @@ a {
   border-top-right-radius: 1rem;
 }
 
+#profile-cards::-webkit-scrollbar,
 #quil-content::-webkit-scrollbar{
   display: none;
 }
@@ -58,4 +59,13 @@ a {
 
 .dialog-bg{
   background-color: rgba(0, 0, 0, 0.685);
+}
+
+@media (min-width: 1280px){
+  #main-homepage{
+    display: grid;
+    grid-template-columns: 20% 50% 20%;
+    margin-top: 1rem;
+    justify-content: center;
+  }
 }

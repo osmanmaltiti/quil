@@ -19,8 +19,8 @@ export const NavbarDesktop = () => {
   return (
     <div className='w-full sticky top-0 flex h-[6vh] p-4 z-30 flex-row justify-between items-center bg-white shadow-lg'>
       <div className='flex flex-row gap-2'>
-        <p className='text-2xl font-semibold'>Quil</p>
-        <input type='search' className='rounded-full focus:outline-none px-3'/>
+        <img className="h-[2rem]" src="/newLogo.png"/>
+        <input type='search' className='rounded-full focus:outline-none px-3 bg-gray-300'/>
       </div>
       <div className='flex flex-row items-center gap-3'>
         <span className='flex flex-row bg-gray-300 px-2 p-1 rounded-3xl gap-1 items-center'>

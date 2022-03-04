@@ -1,10 +1,7 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { IoAdd, IoClose, IoImageOutline, IoMicOutline, IoPencilOutline, IoSearchOutline, IoVideocamOutline } from "react-icons/io5";
+import { IoAdd, IoClose, IoSend, IoImageOutline, IoMicOutline, IoPencilOutline, IoSearchOutline, IoVideocamOutline } from "react-icons/io5";
 import Card from "../components/card";
 import { NavbarDesktop, NavbarMobile } from "../components/navbar";
-import { ProfileCard, Statistics } from "../components/profile-card";
-import NewQuilCard from "../components/quil-card";
-import SuggestionCard from "../components/suggestion-card";
 import useMedia from "../hooks/useMedia";
 
 const init = {
@@ -35,6 +32,7 @@ const Home = () => {
   const [buttons, dispatch] = useReducer(reducer, init);
   const [state, setState] = useState(false);
   const [toggle, setToggle] = useState(false);
+  const [stat, ] = useState(10);
   
   useEffect(() => {
     toggle ? dispatch('open'): dispatch('close');
@@ -47,25 +45,89 @@ const Home = () => {
     <div className="flex flex-col h-screen w-screen overflow-x-hidden bg-[#eeeeee]">
       { lg ? <NavbarDesktop/> : <NavbarMobile/> }
       
-      <main className=" w-full h-screen p-2 lg:pb-0 flex flex-col gap-4
-      lg:h-[94vh] lg:flex-row  justify-between mx-auto lg:overflow-y-auto">
-        
-        <span className="hidden lg:flex flex-col gap-4">
-          <ProfileCard/>
-          <Statistics/>
-        </span>
-        
-        <span className="flex gap-2 flex-col h-full flex-grow">
+      <main id="main-homepage" className=" w-full h-screen p-2 xl:p-0 lg:pb-0 flex flex-col gap-x-4
+       overflow-y-auto lg:flex lg:flex-row">
+        {/* PROFILE-CARDS */}
+        <div id="profile-cards" className="hidden lg:flex lg:flex-shrink-0 flex-col h-full gap-2 overflow-y-auto">
+          {/* PROFILE-CARD */}
+          <div className='relative flex-shrink-0 h-[20rem] text-black shadow-lg rounded-xl overflow-hidden bg-white lg:flex flex-col justify-between'>
+            <img id='cover-image' className='absolute w-full h-16 bg-teal-700 shadow-md object-cover' src='/spiderman-avi.jpg'/>
+            <img className='z-10 w-[4rem] h-[4rem] rounded-full bg-red-500 mx-auto mt-8 object-cover' src='/spiderman-avi.jpg'/>
+            <span className='w-full flex flex-col items-center border-b border-gray-500 pb-2'>
+              <p className='text-lg font-semibold'>Spiderman NY</p>
+              <p className='text-sm'>@friendlyneighborhood</p>
+              <p className='text-center'>Aliqua reprehenderit veniam sint ea ipsum.</p>
+            </span>
+            <div className='grid grid-cols-2 border-b border-gray-500 pb-3'>
+              <span className='flex flex-col w-full items-center border-r border-gray-500'>
+                <p className='font-bold'>1K</p>
+                <p>Following</p>
+              </span>
+              <span className='flex flex-col w-full items-center'>
+                <p className='font-bold'>510K</p>
+                <p>Followers</p>
+              </span>
+            </div>
+            <button className='text-blue-400 my-4 w-fit mx-auto px-8'>My Profile</button>
+          </div>    
+          {/* STATISTICS */}
+          <div className='h-[20rem] flex-shrink-0 text-black shadow-lg rounded-xl overflow-hidden bg-white lg:flex flex-col p-4 gap-2 items-center'>
+            <p className='text-lg font-semibold'>PROFILE STATS</p>
+            <span className='flex flex-col items-center border-b border-gray-400 w-[70%] pb-2'>
+              <p className='font-bold'>Likes</p>
+              <p>129324</p>
+            </span>
+            <span className='flex flex-col items-center border-b border-gray-400 w-[70%] pb-2'>
+              <p className='font-bold'>Dislikes</p>
+              <p>4333</p>
+            </span>
+            <span className='flex flex-col items-center border-b border-gray-400 w-[70%] pb-2'>
+              <p className='font-bold'>Interactions</p>
+              <p>133657</p>
+            </span>
+            <label className='flex flex-col items-center gap-1 w-[65%] pb-6'>
+              <p className='font-bold'>Popularity {stat}%</p>
+              <div id='progress-bar' className='w-full rounded-full h-[.5rem] overflow-hidden bg-gray-300'>
+                <div style={{width: `${stat}%`}} className={`h-full rounded-full bg-cyan-500`}></div>
+              </div>
+            </label>
+          </div>
+        </div>
+        {/* QUIL-CARDS */}
+        <div className="flex gap-2 flex-col h-full mx-auto overflow-y-auto">
           <div className="lg:hidden sticky top-0 flex flex-row justify-between items-center">
-            <p className="font-bold text-5xl">Quil</p>
+            <img className="h-[3.5rem]" src="/newLogo.png"/>
             <span className={`flex flex-row items-center border pr-[.5rem] rounded-full shadow-md overflow-hidden bg-white w-fit`}>
               <input className={`${search()} focus:outline-none outline-none border-none pl-2 transition-all h-[2rem]`}/>
               <button onClick={() => setState(!state)}><IoSearchOutline className="text-2xl my-[.5rem] font-bold mx-auto"/></button>
             </span>
           </div>
-          <NewQuilCard image={() => dispatch('image')}
-                       video={() => dispatch('video')}
-                       mic={() => dispatch('mic')}/>
+          {/* QUIL-DECK */}
+          <div style={{gridTemplateColumns: '4rem 1fr'}} 
+            className='lg:grid hidden rounded-xl gap-4 bg-white shadow-lg p-3 px-5'>
+            <img className='w-[4rem] h-[4rem] rounded-full bg-red-600 row-span-2 shadow-lg object-cover' src='/spiderman-avi.jpg'/>
+            <textarea className='flex-grow rounded-md resize-none bg-gray-200 border p-1 focus:outline-none focus:scale-[1.01]' 
+            placeholder="What's on your mind?"/>
+            <span className='grid grid-cols-4 place-items-center text-black'>
+              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 rounded-full border border-gray-300 hover:scale-[1.02]'>
+                <IoImageOutline/>
+                <p>Photo</p>
+              </button>
+              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 rounded-full border border-gray-300 hover:scale-[1.02]'>
+                <IoVideocamOutline/>
+                <p>Video</p>
+              </button>
+              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 rounded-full border border-gray-300 hover:scale-[1.02]'>
+                <IoMicOutline/>
+                <p>Mic</p>
+              </button>
+              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 bg-cyan-500 rounded-full border border-cyan-500 hover:scale-[1.02]'>
+                <p>Send</p>
+                <IoSend/>
+              </button>
+            </span>
+          </div>
+          {/* CARD-MAP */}
           <div id="quil-content" 
             className="card-map lg:shadow-lg bg-white border-2 border-[#ebebeb] rounded-2xl lg:rounded-b-none w-full flex-grow p-2 flex flex-col overflow-y-auto">
                 <Card/>
@@ -79,10 +141,66 @@ const Home = () => {
                 <Card/>
                 <Card/>
           </div>
-        </span>
-        <span>
-          <SuggestionCard/>
-        </span>
+        </div>
+        {/* SUGGESTION-CARD */}
+        <div className='hidden xl:flex p-2 px-3 w-full h-fit text-black shadow-lg rounded-xl bg-white flex-col'>
+            <p className='text-lg mb-2 font-semibold'>People you may know</p>
+            <div className='flex flex-col w-full gap-4'>
+                <div className='flex flex-row justify-center gap-2 w-full'>
+                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
+                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
+                        <p className=''>Spiderman</p>
+                        <p className='text-sm font-light'>@friendlyneighborhood</p>
+                    </span>
+                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
+                </div>
+
+                <div className='flex flex-row justify-center gap-2 w-full'>
+                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
+                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
+                        <p className=''>Spiderman</p>
+                        <p className='text-sm font-light'>@friendlyneighborhood</p>
+                    </span>
+                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
+                </div>
+
+                <div className='flex flex-row justify-center gap-2 w-full'>
+                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
+                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
+                        <p className=''>Spiderman</p>
+                        <p className='text-sm font-light'>@friendlyneighborhood</p>
+                    </span>
+                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
+                </div>
+
+                <div className='flex flex-row justify-center gap-2 w-full'>
+                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
+                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
+                        <p className=''>Spiderman</p>
+                        <p className='text-sm font-light'>@friendlyneighborhood</p>
+                    </span>
+                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
+                </div>
+
+                <div className='flex flex-row justify-center gap-2 w-full'>
+                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
+                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
+                        <p className=''>Spiderman</p>
+                        <p className='text-sm font-light'>@friendlyneighborhood</p>
+                    </span>
+                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
+                </div>
+
+                <div className='flex flex-row justify-center gap-2 w-full'>
+                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
+                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
+                        <p className=''>Spiderman</p>
+                        <p className='text-sm font-light'>@friendlyneighborhood</p>
+                    </span>
+                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
+                </div>
+            </div>
+        </div>
 
 
         <div className="lg:hidden absolute bottom-[9.5rem] right-[4rem]">
@@ -108,7 +226,7 @@ const Home = () => {
                      <IoAdd className="text-4xl text-white"/> }
           </button>
         </div>
-        <span className="lg:hidden">
+        <span >
           <div className={`${buttons.quilState ? 'grid' : 'hidden'} dialog-bg absolute w-full h-full  top-0 left-0 place-items-center`}>
             <div className={`${buttons.quilState ? 'flex' : 'hidden'} w-[90%] flex-col gap-2 bg-white py-4 rounded-xl`}>
               <button className="w-fit mr-2 self-end" onClick={() => dispatch('quil')}><IoClose className="text-2xl "/></button>
