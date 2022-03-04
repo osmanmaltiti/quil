@@ -109,15 +109,18 @@ const Home = () => {
             <textarea className='flex-grow rounded-md resize-none bg-gray-200 border p-1 focus:outline-none focus:scale-[1.01]' 
             placeholder="What's on your mind?"/>
             <span className='grid grid-cols-4 place-items-center text-black'>
-              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 rounded-full border border-gray-300 hover:scale-[1.02]'>
+              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 rounded-full border border-gray-300 hover:scale-[1.02]' 
+              onClick={() => dispatch('image')}>
                 <IoImageOutline/>
                 <p>Photo</p>
               </button>
-              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 rounded-full border border-gray-300 hover:scale-[1.02]'>
+              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 rounded-full border border-gray-300 hover:scale-[1.02]' 
+              onClick={() => dispatch('video')}>
                 <IoVideocamOutline/>
                 <p>Video</p>
               </button>
-              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 rounded-full border border-gray-300 hover:scale-[1.02]'>
+              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 rounded-full border border-gray-300 hover:scale-[1.02]' 
+              onClick={() => dispatch('mic')}>
                 <IoMicOutline/>
                 <p>Mic</p>
               </button>

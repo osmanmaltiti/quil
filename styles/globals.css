@@ -61,11 +61,18 @@ a {
   background-color: rgba(0, 0, 0, 0.685);
 }
 
+#dropdown{
+  background-color: rgba(0, 0, 0, 0.897);
+}
+
 @media (min-width: 1280px){
   #main-homepage{
     display: grid;
     grid-template-columns: 20% 50% 20%;
     margin-top: 1rem;
     justify-content: center;
+  }
+  #quil-content::after{
+    display: none;
   }
 }

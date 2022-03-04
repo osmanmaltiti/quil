@@ -5,7 +5,7 @@ import { MdOutlineThumbUp, MdOutlineThumbDown, MdChatBubbleOutline } from 'react
 const Card = () => {
     const [state, setState] = useState(false);
     const drop = () => {
-        return state ? 'w-[50%] h-[80%]' : 'w-0 h-0 overflow-hidden'
+        return state ? 'w-[11rem] h-[6rem]' : 'w-0 h-0 overflow-hidden'
     }
     const cardRef = useRef()
     useEffect(() => {
@@ -48,7 +48,10 @@ const Card = () => {
                 01/12/2021 . 12:45
             </div>
         </div>
-        <div id='dropdown' className={`${drop()} transition-all absolute rounded-md z-20 rounded-tr-none right-4 top-8 bg-teal-500`}>
+        <div id='dropdown' className={`${drop()} text-white transition-all gap-1 absolute flex flex-col rounded-md z-20 rounded-tr-none right-4 top-8`}>
+            <button className=' w-[10rem] mx-2 mt-2 border-b border-gray-500'>Share</button>
+            <button className=' w-[10rem] mx-2 border-b border-gray-500'>Save</button>
+            <button className=' w-[10rem] mx-2 mb-2'>Delete</button>
         </div>
     </div>
   )
