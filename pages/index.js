@@ -1,8 +1,8 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { IoAdd, IoClose, IoSend, IoImageOutline, IoMicOutline, IoPencilOutline, IoSearchOutline, IoVideocamOutline } from "react-icons/io5";
 import Card from "../components/card";
-import { NavbarDesktop, NavbarMobile } from "../components/navbar";
-import useMedia from "../hooks/useMedia";
+import Link from "next/link";
+import privateRoute from "../components/private-route";
 
 const init = {
   quil: 'z-0', image: 'z-0', video: 'z-0', mic: 'z-0',
@@ -28,7 +28,6 @@ const reducer = (state, action) => {
   }
 }
 const Home = () => {
-  const lg = useMedia('(min-width: 1024px)');
   const [buttons, dispatch] = useReducer(reducer, init);
   const [state, setState] = useState(false);
   const [toggle, setToggle] = useState(false);
@@ -42,10 +41,8 @@ const Home = () => {
     return state ? 'w-[15rem]' : 'w-0'
   }
   return (
-    <div className="flex flex-col h-screen w-screen overflow-x-hidden bg-[#eeeeee]">
-      { lg ? <NavbarDesktop/> : <NavbarMobile/> }
-      
-      <main id="main-homepage" className=" w-full h-screen p-2 xl:p-0 lg:pb-0 flex flex-col gap-x-4
+    <div className="flex flex-col h-[94vh] lg:h-[92vh] w-full overflow-x-hidden bg-[#eeeeee]">
+      <main id="main-homepage" className=" w-full h-full p-2 xl:p-0 lg:pb-0 flex flex-col gap-x-4
        overflow-y-auto lg:flex lg:flex-row">
         {/* PROFILE-CARDS */}
         <div id="profile-cards" className="hidden lg:flex lg:flex-shrink-0 flex-col h-full gap-2 overflow-y-auto">
@@ -68,22 +65,18 @@ const Home = () => {
                 <p>Followers</p>
               </span>
             </div>
-            <button className='text-blue-400 my-4 w-fit mx-auto px-8'>My Profile</button>
+            <Link href='/profile'><a className='text-blue-400 my-4 w-fit mx-auto px-8'>My Profile</a></Link>
           </div>    
           {/* STATISTICS */}
-          <div className='h-[20rem] flex-shrink-0 text-black shadow-lg rounded-xl overflow-hidden bg-white lg:flex flex-col p-4 gap-2 items-center'>
+          <div className='h-[16rem] flex-shrink-0 text-black shadow-lg rounded-xl overflow-hidden bg-white lg:flex flex-col p-4 gap-2 items-center'>
             <p className='text-lg font-semibold'>PROFILE STATS</p>
             <span className='flex flex-col items-center border-b border-gray-400 w-[70%] pb-2'>
               <p className='font-bold'>Likes</p>
               <p>129324</p>
             </span>
             <span className='flex flex-col items-center border-b border-gray-400 w-[70%] pb-2'>
-              <p className='font-bold'>Dislikes</p>
+              <p className='font-bold'>Unlikes</p>
               <p>4333</p>
-            </span>
-            <span className='flex flex-col items-center border-b border-gray-400 w-[70%] pb-2'>
-              <p className='font-bold'>Interactions</p>
-              <p>133657</p>
             </span>
             <label className='flex flex-col items-center gap-1 w-[65%] pb-6'>
               <p className='font-bold'>Popularity {stat}%</p>
@@ -268,4 +261,4 @@ const Home = () => {
 }
 
 
-export default Home;
+export default privateRoute(Home);

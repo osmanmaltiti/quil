@@ -30,6 +30,7 @@ a {
   border-top-right-radius: 1rem;
 }
 
+#main-profile::-webkit-scrollbar,
 #profile-cards::-webkit-scrollbar,
 #quil-content::-webkit-scrollbar{
   display: none;

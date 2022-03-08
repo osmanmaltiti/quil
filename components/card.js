@@ -26,7 +26,7 @@ const Card = () => {
             </span>
             <button className='pr-1 text-2xl self-start' onClick={() => setState(!state)}><IoMdMore/></button>
         </div>
-        <div className='text-sm px-3'>
+        <div className='text-base px-3'>
             Lorem id cupidatat quis proident voluptate voluptate ullamco sunt occaecat. Occaecat do dolore occaecat ipsum adipisicing est incididunt laborum consequat ea. Consectetur officia nisi in consequat in occaecat excepteur reprehenderit velit qui dolor exercitation cillum incididunt.
         </div>
         <div className='w-full flex flex-row border-y border-gray-300 py-2 text-lg px-4 lg:gap-12 justify-between'>

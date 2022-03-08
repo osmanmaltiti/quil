@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { IoMailOutline, IoKeyOutline, IoPersonOutline } from 'react-icons/io5';
 import { FaHashtag } from 'react-icons/fa';
 import Image from 'next/image'
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 const Sign = () => {
     const [state, setState] = useState(false);
     const signOption = () => state ? <SignUp toggle={() => setState(!state)}/> : <SignIn toggle={() => setState(!state)}/>
   return (
-    <div className='w-screen flex flex-col h-screen bg-gray-100 items-center justify-center gap-10'>
+    <div className='w-screen fixed z-30 top-0 flex flex-col h-screen bg-gray-100 items-center justify-center gap-10'>
         <h1 className='text-5xl font-bold bg-cyan-500 p-2 px-8 rounded'>Quil</h1>
         <div className='flex flex-col items-center w-full md:w-[75%] lg:w-[65%] xl:w-[55%] 2xl:w-[45%]'>
             { signOption() }
@@ -21,6 +22,7 @@ const Sign = () => {
 export default Sign;
 
 const SignIn = (props) => {
+    const router = useRouter();
     const validate = (values) => {
         let error = {};
         if(!values.email){
@@ -39,10 +41,12 @@ const SignIn = (props) => {
         },
         validate,
         onSubmit: async(value) => {
-            const { data, error } = await axios.post('http://localhost:3000/api/users', {
+            const { data, error } = await axios.post('http://localhost:3000/api/users/', {
                 value, type: 'login'
             });
-            error ? alert(error.message) : alert(data)          
+            error ? alert(error.message) : 
+            localStorage.setItem('currentUser', JSON.stringify(data));
+            setTimeout(() => router.push('/'), 500);       
         }
     })
     return(
@@ -80,7 +84,7 @@ const SignIn = (props) => {
                             onBlur={formik.handleBlur}/>
                         <p>Remember Me</p>
                     </label>
-                    <button className='text-sm text-gray-500 hover:text-black' type='submit'>Forgotten password?</button>
+                    <button className='text-sm text-gray-500 hover:text-black' type='button'>Forgotten password?</button>
                 </span>
                 <button className='bg-sky-500 w-fit py-1 px-8 mx-auto rounded text-white mt-4'>Log In</button>
             </form>
@@ -129,9 +133,10 @@ const SignUp = (props) => {
         onSubmit: async(value) => {
             const { name, email, number, password } = value
             const { data, error } = await axios.post('http://localhost:3000/api/users', {
-                value: { name, email, number: number.toString(), password }, type: 'signup'
+                value: { name, email, number: `+233${number}`, password }, type: 'signup'
             });
-            error ? console.log(error) : alert(data);
+            error ? console.log(error) : 
+            localStorage.setItem('currentUser', JSON.stringify(data));
         }
     })
     return(
