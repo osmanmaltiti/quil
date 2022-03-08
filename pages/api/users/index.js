@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const useHandler = async(req, res) => {
+const userHandler = async(req, res) => {
     const { value, type } = req.body
     switch(type){
         case 'login':
@@ -28,4 +28,4 @@ const useHandler = async(req, res) => {
     }
 }
 
-export default useHandler;
+export default userHandler;

@@ -26,7 +26,7 @@ const Card = () => {
             </span>
             <button className='pr-1 text-2xl self-start' onClick={() => setState(!state)}><IoMdMore/></button>
         </div>
-        <div className='text-base px-3'>
+        <div className='text-sm px-3'>
             Lorem id cupidatat quis proident voluptate voluptate ullamco sunt occaecat. Occaecat do dolore occaecat ipsum adipisicing est incididunt laborum consequat ea. Consectetur officia nisi in consequat in occaecat excepteur reprehenderit velit qui dolor exercitation cillum incididunt.
         </div>
         <div className='w-full flex flex-row border-y border-gray-300 py-2 text-lg px-4 lg:gap-12 justify-between'>
@@ -48,7 +48,7 @@ const Card = () => {
                 01/12/2021 . 12:45
             </div>
         </div>
-        <div id='dropdown' className={`${drop()} text-white transition-all gap-1 absolute flex flex-col rounded-md z-20 rounded-tr-none right-4 top-8`}>
+        <div id='dropdown' className={`${drop()} text-white transition-all gap-1 absolute flex overflow-hidden flex-col rounded-md z-20 rounded-tr-none right-4 top-8`}>
             <button className=' w-[10rem] mx-2 mt-2 border-b border-gray-500'>Share</button>
             <button className=' w-[10rem] mx-2 border-b border-gray-500'>Save</button>
             <button className=' w-[10rem] mx-2 mb-2'>Delete</button>

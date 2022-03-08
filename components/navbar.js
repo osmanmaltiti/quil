@@ -7,7 +7,7 @@ import { IoHomeOutline, IoChatboxEllipsesOutline,
 
 export const NavbarMobile = () => {
   return (
-    <div className='fixed bottom-0 z-10 h-fit w-full flex flex-row justify-between items-center px-2 py-2 bg-gray-400'>
+    <div className='fixed bottom-0 z-20 h-fit w-full flex flex-row justify-between items-center px-2 py-2 bg-gray-400'>
        <span className='w-full flex flex-row justify-around text-2xl'>
          <Link href='/'><button className='hover:bg-gray-500 rounded-lg p-2'><IoHomeOutline/></button></Link>
          <button className='hover:bg-gray-500 rounded-lg p-2'><IoNotificationsOutline/></button>

@@ -1,38 +1,24 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { IoAdd, IoClose, IoSend, IoImageOutline, IoMicOutline, IoPencilOutline, IoSearchOutline, IoVideocamOutline } from "react-icons/io5";
+import { IoAdd, IoClose, IoSend, IoImageOutline, 
+  IoMicOutline, IoPencilOutline, IoSearchOutline, IoVideocamOutline } from "react-icons/io5";
 import Card from "../components/card";
 import Link from "next/link";
 import privateRoute from "../components/private-route";
+import { buttonReducers, quilReducers } from "../reducers/hompepage-reducers";
+import useHomepage from "../functions/homepage-functions";
 
-const init = {
-  quil: 'z-0', image: 'z-0', video: 'z-0', mic: 'z-0',
-  quilState: false, imageState: false, videoState: false, micState: false,
-}
 
-const reducer = (state, action) => {
-  switch(action){
-    case 'open':
-      return {quil: 'open-quil', image: 'open-image', video: 'open-video', mic: 'open-mic'}
-    case 'quil':
-      return {...state, quilState: !state.quilState}
-    case 'image':
-      return {...state, imageState: !state.imageState}
-    case 'video':
-      return {...state, videoState: !state.videoState}
-    case 'mic':
-      return {...state, micState: !state.micState}
-    case 'close':
-      return init
-    default:
-      return state
-  }
-}
 const Home = () => {
-  const [buttons, dispatch] = useReducer(reducer, init);
+  const [initButtons, reducerButtons] = buttonReducers();
+  const [initQuils, reducerQuils] = quilReducers();
+  const [buttons, dispatch] = useReducer(reducerButtons, initButtons);
+  const [quils, dispatchQuils] = useReducer(reducerQuils, initQuils);
   const [state, setState] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [stat, ] = useState(10);
-  
+  const { handleSendQuil, handleSendImage,
+          handleSendVideo, handleSendMic } = useHomepage();
+
   useEffect(() => {
     toggle ? dispatch('open'): dispatch('close');
   },[toggle])
@@ -40,6 +26,7 @@ const Home = () => {
   const search = () => {
     return state ? 'w-[15rem]' : 'w-0'
   }
+
   return (
     <div className="flex flex-col h-[94vh] lg:h-[92vh] w-full overflow-x-hidden bg-[#eeeeee]">
       <main id="main-homepage" className=" w-full h-full p-2 xl:p-0 lg:pb-0 flex flex-col gap-x-4
@@ -226,35 +213,49 @@ const Home = () => {
           <div className={`${buttons.quilState ? 'grid' : 'hidden'} dialog-bg absolute w-full h-full  top-0 left-0 place-items-center`}>
             <div className={`${buttons.quilState ? 'flex' : 'hidden'} w-[90%] flex-col gap-2 bg-white py-4 rounded-xl`}>
               <button className="w-fit mr-2 self-end" onClick={() => dispatch('quil')}><IoClose className="text-2xl "/></button>
-              <textarea className='rounded-md w-11/12 h-[10rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' placeholder="What's on your mind?"/>
-              <button className="border-2 border-black w-fit mx-auto px-4 rounded">Send</button>
+              <textarea onChange={(e) => dispatchQuils({type:'quilText', payload: e.target.value})}
+              className='rounded-md w-11/12 h-[10rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' 
+              placeholder="What's on your mind?"/>
+              <button className="border-2 border-black w-fit mx-auto px-4 rounded" 
+                      onClick={() => handleSendQuil(quils.quilText)}>Send</button>
             </div>
           </div>
           <div className={`${buttons.imageState ? 'grid' : 'hidden'} dialog-bg absolute w-full h-full top-0 left-0 place-items-center`}>
             <div className={`${buttons.imageState ? 'flex' : 'hidden'} w-[90%] lg:w-[60%] xl:w-[40%] flex-col gap-2 bg-white py-4 rounded-xl`}>
               <button className="w-fit mr-2 self-end" onClick={() => dispatch('image')}><IoClose className="text-2xl "/></button>
-              <textarea className='rounded-md w-11/12 h-[5rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' placeholder="Caption....."/>
-              <input type='file' className='rounded-md w-11/12 mx-auto resize-none bg-gray-200 border border-dashed border-black p-1'/>
+              <textarea onChange={(e) => dispatchQuils({type:'imageCaption', payload: e.target.value})} 
+              className='rounded-md w-11/12 h-[5rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' 
+              placeholder="Caption....."/>
+              <input type='file' 
+              onChange={(e) => dispatchQuils({type:'imageFile', payload: e.target.files[0]})} 
+              className='rounded-md w-11/12 mx-auto resize-none bg-gray-200 border border-dashed border-black p-1'/>
               <div className=""></div>
-              <button className="border-2 border-black w-fit mx-auto px-4 rounded">Send</button>
+              <button className="border-2 border-black w-fit mx-auto px-4 rounded" 
+                      onClick={() => handleSendImage(quils.imageCaption, quils.imageFile)}>Send</button>
             </div>
           </div>
           <div className={`${buttons.videoState ? 'grid' : 'hidden'} dialog-bg absolute w-full h-full top-0 left-0 place-items-center`}>
             <div className={`${buttons.videoState ? 'flex' : 'hidden'} w-[90%] lg:w-[60%] xl:w-[40%] flex-col gap-2 bg-white py-4 rounded-xl`}>
               <button className="w-fit mr-2 self-end" onClick={() => dispatch('video')}><IoClose className="text-2xl "/></button>
-              <textarea className='rounded-md w-11/12 h-[5rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' placeholder="Caption....."/>
-              <input type='file' className='rounded-md w-11/12 mx-auto resize-none bg-gray-200 border border-dashed border-black p-1'/>
+              <textarea onChange={(e) => dispatchQuils({type:'videoCaption', payload: e.target.value})} 
+              className='rounded-md w-11/12 h-[5rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' placeholder="Caption....."/>
+              <input onChange={(e) => dispatchQuils({type:'videoFile', payload: e.target.files[0]})} 
+              type='file' className='rounded-md w-11/12 mx-auto resize-none bg-gray-200 border border-dashed border-black p-1'/>
               <div className=""></div>
-              <button className="border-2 border-black w-fit mx-auto px-4 rounded">Send</button>
+              <button className="border-2 border-black w-fit mx-auto px-4 rounded"
+                      onClick={() => handleSendVideo(quils.videoCaption, quils.videoFile)}>Send</button>
             </div>
           </div>
           <div className={`${buttons.micState ? 'grid' : 'hidden'} dialog-bg absolute w-full h-full top-0 left-0 place-items-center`}>
             <div className={`${buttons.micState ? 'flex' : 'hidden'} w-[90%] lg:w-[60%] xl:w-[40%] flex-col gap-2 bg-white py-4 rounded-xl`}>
               <button className="w-fit mr-2 self-end" onClick={() => dispatch('mic')}><IoClose className="text-2xl "/></button>
-              <textarea className='rounded-md w-11/12 h-[5rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' placeholder="Caption....."/>
-              <input type='file' className='rounded-md w-11/12 mx-auto resize-none bg-gray-200 border border-dashed border-black p-1'/>
+              <textarea onChange={(e) => dispatchQuils({type:'micCaption', payload: e.target.value})} 
+              className='rounded-md w-11/12 h-[5rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' placeholder="Caption....."/>
+              <input onChange={(e) => dispatchQuils({type:'micFile', payload: e.target.files[0]})}
+              type='file' className='rounded-md w-11/12 mx-auto resize-none bg-gray-200 border border-dashed border-black p-1'/>
               <div className=""></div>
-              <button className="border-2 border-black w-fit mx-auto px-4 rounded">Send</button>
+              <button className="border-2 border-black w-fit mx-auto px-4 rounded" 
+                      onClick={() => handleSendMic(quils.micCaption, quils.micFile)}>Send</button>
             </div>
           </div>
         </span>

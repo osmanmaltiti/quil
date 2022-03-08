@@ -9,11 +9,11 @@ const privateRoute = (WrappedComponent) => {
       const user = localStorage.getItem("currentUser");
       
       if(!user){
-        Router.replace("/sign");
-        return null
+        return <WrappedComponent {...props} />
       }
-
-      return <WrappedComponent {...props} />
+      
+      Router.replace("/sign");
+      return null
     }
 
     return null;
