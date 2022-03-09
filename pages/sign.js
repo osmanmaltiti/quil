@@ -41,12 +41,12 @@ const SignIn = (props) => {
         },
         validate,
         onSubmit: async(value) => {
-            const { data, error } = await axios.post('http://localhost:3000/api/users/', {
+            const { data, error } = await axios.post('http://localhost:3000/api/users', {
                 value, type: 'login'
             });
             error ? alert(error.message) : 
             localStorage.setItem('currentUser', JSON.stringify(data));
-            setTimeout(() => router.push('/'), 500);       
+            setTimeout(() => router.push('/'), 200);       
         }
     })
     return(
@@ -103,10 +103,14 @@ const SignIn = (props) => {
 }
 
 const SignUp = (props) => {
+    const router = useRouter();
     const validate = (values) => {
         let error = {};
         if(!values.name){
             error.name = 'Required'
+        }
+        if(!values.displayname){
+            error.displayname = 'Required'
         }
         if(!values.email){
             error.email = 'Required'
@@ -124,6 +128,7 @@ const SignUp = (props) => {
     const formik = useFormik({
         initialValues: {
             name: '',
+            displayname: '',
             email: '',
             number: '',
             password: '',
@@ -131,12 +136,13 @@ const SignUp = (props) => {
         },
         validate,
         onSubmit: async(value) => {
-            const { name, email, number, password } = value
+            const { name, displayname, email, number, password } = value
             const { data, error } = await axios.post('http://localhost:3000/api/users', {
-                value: { name, email, number: `+233${number}`, password }, type: 'signup'
+                value: { name, displayname, email, number: `+233${number}`, password }, type: 'signup'
             });
             error ? console.log(error) : 
             localStorage.setItem('currentUser', JSON.stringify(data));
+            setTimeout(() => router.push('/'), 200);       
         }
     })
     return(
@@ -152,6 +158,17 @@ const SignUp = (props) => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}/>
                         {formik.errors.name ? <div className='text-sm self-end text-red-600'>{formik.errors.name}</div>: null }
+                </label>
+                <label className='flex flex-row items-center w-full border-b-2 border-gray-500'>
+                    <IoPersonOutline className='text-xl'/>
+                    <input type='text' 
+                        className='h-10 flex-grow pl-2 bg-transparent focus:outline-none focus:border-black' 
+                        placeholder='Enter display name'
+                        id='displayname'
+                        value={formik.values.displayname}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}/>
+                        {formik.errors.displayname ? <div className='text-sm self-end text-red-600'>{formik.errors.displayname}</div>: null }
                 </label>
                 <label className='flex flex-row items-center w-full border-b-2 border-gray-500'>
                     <IoMailOutline className='text-xl'/>
