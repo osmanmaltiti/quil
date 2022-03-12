@@ -12,6 +12,13 @@ const quilHandler = async(req, res) => {
                 res.end();
             }
         case 'GET':
+            try{
+                const response = await axios.get('http://localhost:5000/api/quil/feed');
+                res.send(response.data);
+            } catch(error) {
+                res.send(error.message);
+                res.end();
+            }
     }
 }
 

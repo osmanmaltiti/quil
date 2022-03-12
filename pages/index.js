@@ -6,22 +6,45 @@ import Link from "next/link";
 import privateRoute from "../components/private-route";
 import { buttonReducers, quilReducers } from "../reducers/hompepage-reducers";
 import useHomepage from "../functions/homepage-functions";
+import { useSelector } from 'react-redux';
+import axios from 'axios'
+import { useDispatch } from 'react-redux'
+import { getQuil } from "../redux/home-feed-slice";
 
 
 const Home = () => {
+  const stateDispatch = useDispatch();
   const [initButtons, reducerButtons] = buttonReducers();
   const [initQuils, reducerQuils] = quilReducers();
   const [buttons, dispatch] = useReducer(reducerButtons, initButtons);
   const [quils, dispatchQuils] = useReducer(reducerQuils, initQuils);
   const [state, setState] = useState(false);
   const [toggle, setToggle] = useState(false);
-  const [stat, ] = useState(10);
+  const [stat ] = useState(10);
   const { handleSendQuil, handleSendImage,
           handleSendVideo, handleSendMic } = useHomepage();
+  const feed = useSelector(state => state.feed.quil);
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      (async() => {
+        const response = await axios.get('http://localhost:3000/api/quil');
+        stateDispatch(getQuil(response.data))
+      })()
+    }, 3000)
+  }, [])
 
   useEffect(() => {
     toggle ? dispatch('open'): dispatch('close');
-  },[toggle])
+  },[toggle]);
+
+  useEffect(() => {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    const { user } = currentUser;
+    setUser(user);
+  }, [])
+
 
   const search = () => {
     return state ? 'w-[15rem]' : 'w-0'
@@ -36,10 +59,10 @@ const Home = () => {
           {/* PROFILE-CARD */}
           <div className='relative flex-shrink-0 h-[20rem] text-black shadow-lg rounded-xl overflow-hidden bg-white lg:flex flex-col justify-between'>
             <img id='cover-image' className='absolute w-full h-16 bg-teal-700 shadow-md object-cover' src='/spiderman-avi.jpg'/>
-            <img className='z-10 w-[4rem] h-[4rem] rounded-full bg-red-500 mx-auto mt-8 object-cover' src='/spiderman-avi.jpg'/>
+            <img className='z-10 w-[4rem] h-[4rem] rounded-full mx-auto mt-8 object-cover' src={user?.profile} alt=' '/>
             <span className='w-full flex flex-col items-center border-b border-gray-500 pb-2'>
-              <p className='text-lg font-semibold'>Spiderman NY</p>
-              <p className='text-sm'>@friendlyneighborhood</p>
+              <p className='text-lg font-semibold'>{user?.fullname}</p>
+              <p className='text-sm'>@{user?.displayname}</p>
               <p className='text-center'>Aliqua reprehenderit veniam sint ea ipsum.</p>
             </span>
             <div className='grid grid-cols-2 border-b border-gray-500 pb-3'>
@@ -85,7 +108,7 @@ const Home = () => {
           {/* QUIL-DECK */}
           <div style={{gridTemplateColumns: '4rem 1fr'}} 
             className='lg:grid hidden rounded-xl gap-4 bg-white shadow-lg p-3 px-5'>
-            <img className='w-[4rem] h-[4rem] rounded-full bg-red-600 row-span-2 shadow-lg object-cover' src='/spiderman-avi.jpg'/>
+            <img className='w-[4rem] h-[4rem] rounded-full row-span-2 shadow-lg object-cover' src={user?.profile}/>
             <textarea className='flex-grow rounded-md resize-none bg-gray-200 border p-1 focus:outline-none focus:scale-[1.01]' 
             placeholder="What's on your mind?"/>
             <span className='grid grid-cols-4 place-items-center text-black'>
@@ -113,16 +136,20 @@ const Home = () => {
           {/* CARD-MAP */}
           <div id="quil-content" 
             className="card-map lg:shadow-lg bg-white border-2 border-[#ebebeb] rounded-2xl lg:rounded-b-none w-full flex-grow p-2 flex flex-col overflow-y-auto">
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
+                {
+                  feed?.map(item => 
+                    <Card
+                      key = {item._id}
+                      quil = {item.quil}
+                      profile = {item.user.profile}
+                      name = {item.user.name}
+                      displayname = {item.user.displayname}
+                      likes = {item.likes.length}
+                      unlikes = {item.unlikes.length}
+                      comments = {item.comments.length}
+                      timestamp = {item.timestamp}
+                    />)
+                }
           </div>
         </div>
         {/* SUGGESTION-CARD */}

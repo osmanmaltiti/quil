@@ -6,7 +6,7 @@ const Layout = ({children}) => {
   const lg = useMedia('(min-width: 1024px)');
 
   return (
-    <div className='w-screen h-screen overflow-x-hidden'>
+    <div className='w-screen h-screen overflow-x-hidden font-mons'>
       { lg ? <NavbarDesktop/> : <NavbarMobile/> }
       { children }
     </div>

@@ -5,16 +5,16 @@ import { storage } from "../firebase/firebase";
 const useHomepage = () => {
     const handleSendQuil = async(quil, callback) => {
         const { user } = JSON.parse(localStorage.getItem("currentUser"));
+        let newQuil = `${quil} + Quil + ${null}`;
         const input = {
-            quil,
+            quil: newQuil,
             uid: user.uid,
             name: user.fullname,
             displayname: user.displayname,
             timestamp: "12/01/2021",
             profile: user.profile,
         }
-        const quilResponse = await axios.post('http://localhost:3000/api/quil', {input})
-        console.log(quilResponse.data)
+        await axios.post('http://localhost:3000/api/quil', {input})
     }
     const handleSendImage = async(imageCaption, imageFile, callback) => {
         const { user } = JSON.parse(localStorage.getItem("currentUser"));
@@ -36,8 +36,7 @@ const useHomepage = () => {
                             timestamp: "12/01/2021",
                             profile: user.profile,
                         }
-                        const quilResponse = await axios.post('http://localhost:3000/api/quil', {input})
-                        console.log(quilResponse.data)
+                        await axios.post('http://localhost:3000/api/quil', {input})
                     });
                 });
         } catch (error) {
@@ -64,8 +63,7 @@ const useHomepage = () => {
                             timestamp: "12/01/2021",
                             profile: user.profile,
                         }
-                        const quilResponse = await axios.post('http://localhost:3000/api/quil', {input})
-                        console.log(quilResponse.data)
+                        await axios.post('http://localhost:3000/api/quil', {input})
                     });
                 });
         } catch (error) {
@@ -92,8 +90,7 @@ const useHomepage = () => {
                             timestamp: "12/01/2021",
                             profile: user.profile,
                         }
-                        const quilResponse = await axios.post('http://localhost:3000/api/quil', {input})
-                        console.log(quilResponse.data)
+                        await axios.post('http://localhost:3000/api/quil', {input})
                     });
                 });
         } catch (error) {

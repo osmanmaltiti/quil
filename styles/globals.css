@@ -35,11 +35,7 @@ a {
 #quil-content::-webkit-scrollbar{
   display: none;
 }
-#quil-content::after{
-  content: '.';
-  margin-top: 1rem;
-  visibility: hidden;
-}
+
 
 .open-quil{
   top: -2.5rem;
