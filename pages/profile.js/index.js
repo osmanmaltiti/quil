@@ -1,8 +1,10 @@
 import axios from 'axios';
-import React, { useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { IoClose, IoPencilOutline } from 'react-icons/io5';
 import Card from "../../components/card";
 import privateRoute from '../../components/private-route';
+import { useDispatch, useSelector } from "react-redux";
+import { getUserQuils } from '../../redux/profile-slice';
 
 const init = {
   editName: '', editBio: '',
@@ -26,6 +28,8 @@ const reducer = (state, action) => {
       return {...state, newPassword: action.payload}
     case 'confirmPassword':
       return {...state, confirmPassword: action.payload}
+    case 'reset':
+      return state = init
   }
 }
 
@@ -33,22 +37,47 @@ const Profile = () => {
   const [update, dispatch] = useReducer(reducer, init);
   const [open, setOpen] = useState(false);
   const [openPass, setOpenPass] = useState(false);
+  const state_dispatch = useDispatch();
+  const profileQuil = useSelector(state => state.profile.quil);
+  const [user, setUser] = useState({});
+  const [updated, setUpdated] = useState()
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    setUser(user);
+    (async() => {
+      const response = await axios.get('http://localhost:3000/api/quil/profile', { 
+        headers: {
+        uid: user.uid
+      }})
+      state_dispatch(getUserQuils(response.data))
+    })()
+  }, [updated])
 
   const handleUpdate = async() => {
-    const newUpdate = {};
+    const newUpdate = {
+      uid: user.uid
+    };
     update.editName !== '' ? newUpdate.name = update.editName : null;
     update.editBio !== '' ? newUpdate.bio = update.editBio : null;
-    const updateResponse = await axios.post('http://localhost:3000/api/users/update', {update: newUpdate}, {
-      params: { type: 'profile update'}
-    });
-    if(updateResponse) alert('Updated successfully')
+    dispatch({type: 'reset'});
+    setOpen(!open);
+    const updateResponse = await axios.post('http://localhost:3000/api/users/update', 
+      { update: newUpdate }, 
+      { params: {type: 'profile update'} });
+    localStorage.setItem("currentUser", JSON.stringify(updateResponse.data));
+    setUpdated(updateResponse.statusText)
   }
 
   const handlePasswordUpdate = async() => {
-    const newPasswordUpdate = {};
+    const newPasswordUpdate = {
+      user: uid
+    };
     if( update.confirmPassword === update.newPassword){
       update.oldPassword !== '' ? newPasswordUpdate.oldPassword = update.oldPassword : null;
       update.newPassword !== '' ? newPasswordUpdate.password = update.newPassword : null;
+      dispatch({type: 'reset'});
+      setOpen(!open);
       const updateResponse = await axios.post('http://localhost:3000/api/users/update', {update: newPasswordUpdate}, {
         params: { type: 'password update'}
       });
@@ -63,11 +92,11 @@ const Profile = () => {
       <div className='w-full h-full flex-grow'>
         <div style={{backgroundImage: 'url("/spiderman-avi.jpg")', backgroundSize: 'cover', backgroundPosition: 'center'}} className='w-full bg-green-400 rounded-b-3xl lg:rounded-none overflow-hidden mb-2'>
           <span className='relative py-6 w-full h-full flex flex-col backdrop-blur-sm'>
-            <img className='bg-blue-400 w-[5rem] h-[5rem] rounded-full mx-auto object-cover' src='/spiderman-avi.jpg'/>
+            <img className='bg-blue-400 w-[5rem] h-[5rem] rounded-full mx-auto object-cover' src={user?.profile}/>
             <button className='fixed z-20 right-3 text-2xl bg-white rounded-full p-1' onClick={() => setOpen(true)}><IoPencilOutline/></button>
             <span className='flex flex-col bg-white w-fit mx-auto p-2 mt-1 rounded-xl'>
-              <h2 className='mx-auto font-medium'>Spiderman</h2>
-              <h3 className='mx-auto'>@yourfriendlyneighbourhood</h3>
+              <h2 className='mx-auto font-medium'>{user?.fullname}</h2>
+              <h3 className='mx-auto'>@{user?.displayname}</h3>
               <p className='mx-auto'>Hey there miles morales here</p>
             </span>
           </span>
@@ -93,25 +122,35 @@ const Profile = () => {
             <button>Media</button>
           </span>
           <div className='w-[90%] flex-grow'>
-            <Card/>
-            <Card/>
-            <Card/>
-            <Card/>
-            <Card/>
-            <Card/>
-            <Card/>
-            <Card/>
+            {
+              profileQuil?.map(item => 
+                <Card
+                  key = {item._id}
+                  quil = {item.quil}
+                  profile = {item.user.profile}
+                  name = {item.user.fullname}
+                  displayname = {item.user.displayname}
+                  likes = {item.likes.length}
+                  unlikes = {item.unlikes.length}
+                  comments = {item.comments.length}
+                  timestamp = {item.timestamp}
+                />)
+            }            
           </div>
         </div>
         <div id='updateProfile' className={`${open ? 'w-[80%]' : 'w-0'} overflow-y-scroll absolute flex flex-col h-[94vh] shadow-2xl bg-white top-0 right-0 z-10 pt-3 transition-all`}>
           <button className='self-end' onClick={() => setOpen(false)} ><IoClose className='text-3xl'/></button>
           <span className='mx-auto w-[95%]'>
             <p>Change Username</p>
-            <input className=' px-2 border border-black w-full rounded' onChange={(e) => dispatch({type: 'editName', payload: e.target.value})}/>
+            <input className=' px-2 border border-black w-full rounded' 
+              value={update.editName}
+              onChange={(e) => {dispatch({type: 'editName', payload: e.target.value})}}/>
           </span>
           <span className='mx-auto w-[95%]'>
             <p>Edit Bio</p>
-            <textarea className='px-2 border resize-none h-[8rem] rounded border-black w-full' onChange={(e) => dispatch({type: 'editBio', payload: e.target.value})}/>
+            <textarea className='px-2 border resize-none h-[8rem] rounded border-black w-full'
+             value={update.editBio}
+             onChange={(e) => dispatch({type: 'editBio', payload: e.target.value})}/>
           </span>
           <span className='mx-auto w-[95%]'>
             <p>Change Profile Picture</p>
@@ -126,11 +165,17 @@ const Profile = () => {
           <div className='h-[13rem] w-full'>
             <span className={`${openPass ? 'h-[13rem]': 'h-0'} transition-all mx-auto overflow-x-hidden w-[95%] flex flex-col mt-2`}>
               <p>Old password</p>
-              <input className=' px-2 border border-black w-full rounded' onChange={(e) => dispatch({type: 'oldPassword', payload: e.target.value})}/>
+              <input className=' px-2 border border-black w-full rounded' 
+              value={update.oldPassword}
+              onChange={(e) => dispatch({type: 'oldPassword', payload: e.target.value})}/>
               <p>New password</p>
-              <input className=' px-2 border border-black w-full rounded' onChange={(e) => dispatch({type: 'newPassword', payload: e.target.value})}/>
+              <input className=' px-2 border border-black w-full rounded' 
+              value={update.newPassword}
+              onChange={(e) => dispatch({type: 'newPassword', payload: e.target.value})}/>
               <p>Confirm password</p>
-              <input className=' px-2 border border-black w-full rounded' onChange={(e) => dispatch({type: 'confirmPassword', payload: e.target.value})}/>
+              <input className=' px-2 border border-black w-full rounded' 
+              value={update.confirmPassword}
+              onChange={(e) => dispatch({type: 'confirmPassword', payload: e.target.value})}/>
               <button className='bg-red-600 w-fit px-4 py-1 text-white mx-auto my-2 rounded' onClick={handlePasswordUpdate}>Save changes</button>
             </span>
           </div>

@@ -6,7 +6,7 @@ const privateRoute = (WrappedComponent) => {
     if(typeof window !== "undefined") {
       const Router = useRouter();
 
-      const user = JSON.parse(localStorage.getItem("currentUser"));
+      const user = JSON.parse(localStorage.getItem("userAuth"));
       
       if(!user){
         Router.replace("/sign");

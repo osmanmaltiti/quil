@@ -44,8 +44,14 @@ const SignIn = (props) => {
             const { data, error } = await axios.post('http://localhost:3000/api/users', {
                 value, type: 'login'
             });
+            const { auth, refreshToken, accessToken, user } = data
             error ? alert(error.message) : 
-            localStorage.setItem('currentUser', JSON.stringify(data));
+            localStorage.setItem('userAuth', JSON.stringify({
+                auth,
+                refreshToken,
+                accessToken
+            }));
+            localStorage.setItem('currentUser', JSON.stringify(user));
             setTimeout(() => router.push('/'), 200);       
         }
     })
@@ -140,8 +146,14 @@ const SignUp = (props) => {
             const { data, error } = await axios.post('http://localhost:3000/api/users', {
                 value: { name, displayname, email, number: `+233${number}`, password }, type: 'signup'
             });
+            const { auth, refreshToken, accessToken, user } = data
             error ? console.log(error) : 
-            localStorage.setItem('currentUser', JSON.stringify(data));
+            localStorage.setItem('userAuth', JSON.stringify({
+                auth,
+                refreshToken,
+                accessToken
+            }));
+            localStorage.setItem('currentUser', JSON.stringify(user));
             setTimeout(() => router.push('/'), 200);       
         }
     })

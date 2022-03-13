@@ -29,7 +29,7 @@ export const buttonReducers = () => {
 export const quilReducers = () => {
     const init = {
         quilText: '', 
-        imageCaption: '', imageFile: '',
+        imageCaption: '', imageFile: null,
         videoCaption: '', videoFile: '',
         micCaption: '', micFile: ''
       }

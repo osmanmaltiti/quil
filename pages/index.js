@@ -20,20 +20,19 @@ const Home = () => {
   const [quils, dispatchQuils] = useReducer(reducerQuils, initQuils);
   const [state, setState] = useState(false);
   const [toggle, setToggle] = useState(false);
-  const [stat ] = useState(10);
+  const [stat] = useState(10);
   const { handleSendQuil, handleSendImage,
           handleSendVideo, handleSendMic } = useHomepage();
   const feed = useSelector(state => state.feed.quil);
+  const [ homefeed, setHomeFeed ] = useState()
   const [user, setUser] = useState({});
 
   useEffect(() => {
-    const interval = setInterval(() => {
       (async() => {
         const response = await axios.get('http://localhost:3000/api/quil');
         stateDispatch(getQuil(response.data))
       })()
-    }, 3000)
-  }, [])
+  }, [ homefeed ]);
 
   useEffect(() => {
     toggle ? dispatch('open'): dispatch('close');
@@ -41,21 +40,17 @@ const Home = () => {
 
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    const { user } = currentUser;
-    setUser(user);
-  }, [])
+    setUser(currentUser);
+  }, []);
 
-
-  const search = () => {
-    return state ? 'w-[15rem]' : 'w-0'
-  }
+  const search = () => state ? 'w-[15rem]' : 'w-0';
 
   return (
     <div className="flex flex-col h-[94vh] lg:h-[92vh] w-full overflow-x-hidden bg-[#eeeeee]">
       <main id="main-homepage" className=" w-full h-full p-2 xl:p-0 lg:pb-0 flex flex-col gap-x-4
        overflow-y-auto lg:flex lg:flex-row">
         {/* PROFILE-CARDS */}
-        <div id="profile-cards" className="hidden lg:flex lg:flex-shrink-0 flex-col h-full gap-2 overflow-y-auto">
+        <div id="profile-cards" className="hidden lg:flex lg:w-[25%] row-span-2 xl:w-full lg:flex-shrink-0 flex-col h-full gap-2 overflow-y-auto">
           {/* PROFILE-CARD */}
           <div className='relative flex-shrink-0 h-[20rem] text-black shadow-lg rounded-xl overflow-hidden bg-white lg:flex flex-col justify-between'>
             <img id='cover-image' className='absolute w-full h-16 bg-teal-700 shadow-md object-cover' src='/spiderman-avi.jpg'/>
@@ -97,7 +92,7 @@ const Home = () => {
           </div>
         </div>
         {/* QUIL-CARDS */}
-        <div className="flex gap-2 flex-col h-full mx-auto overflow-y-auto">
+        <div className="flex gap-2 flex-col row-span-2 w-full h-full mx-auto overflow-y-auto">
           <div className="lg:hidden sticky top-0 flex flex-row justify-between items-center">
             <img className="h-[3.5rem]" src="/newLogo.png"/>
             <span className={`flex flex-row items-center border pr-[.5rem] rounded-full shadow-md overflow-hidden bg-white w-fit`}>
@@ -110,7 +105,7 @@ const Home = () => {
             className='lg:grid hidden rounded-xl gap-4 bg-white shadow-lg p-3 px-5'>
             <img className='w-[4rem] h-[4rem] rounded-full row-span-2 shadow-lg object-cover' src={user?.profile}/>
             <textarea className='flex-grow rounded-md resize-none bg-gray-200 border p-1 focus:outline-none focus:scale-[1.01]' 
-            placeholder="What's on your mind?"/>
+            placeholder="What's on your mind?" value={quils.quilText} onChange={(e) => dispatchQuils({type:'quilText', payload: e.target.value})}/>
             <span className='grid grid-cols-4 place-items-center text-black'>
               <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 rounded-full border border-gray-300 hover:scale-[1.02]' 
               onClick={() => dispatch('image')}>
@@ -127,7 +122,13 @@ const Home = () => {
                 <IoMicOutline/>
                 <p>Mic</p>
               </button>
-              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 bg-cyan-500 rounded-full border border-cyan-500 hover:scale-[1.02]'>
+              <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 bg-cyan-500 rounded-full border border-cyan-500 hover:scale-[1.02]' 
+              onClick={() => {
+                        handleSendQuil(quils.quilText, (log) => {
+                          setHomeFeed(log)
+                        });
+                        dispatchQuils({type:'quilText', payload: ''})
+                      }}>
                 <p>Send</p>
                 <IoSend/>
               </button>
@@ -142,7 +143,7 @@ const Home = () => {
                       key = {item._id}
                       quil = {item.quil}
                       profile = {item.user.profile}
-                      name = {item.user.name}
+                      name = {item.user.fullname}
                       displayname = {item.user.displayname}
                       likes = {item.likes.length}
                       unlikes = {item.unlikes.length}
@@ -212,7 +213,6 @@ const Home = () => {
             </div>
         </div>
 
-
         <div className="lg:hidden absolute bottom-[9.5rem] right-[4rem]">
           <button className={`${buttons.quil} transition-all duration-250 ease-linear absolute left-2 top-4 text-white bg-teal-500 hover:bg-cyan-800 rounded-full p-2 text-xl`} 
           onClick={() => dispatch('quil')}>
@@ -240,17 +240,23 @@ const Home = () => {
           <div className={`${buttons.quilState ? 'grid' : 'hidden'} dialog-bg absolute w-full h-full  top-0 left-0 place-items-center`}>
             <div className={`${buttons.quilState ? 'flex' : 'hidden'} w-[90%] flex-col gap-2 bg-white py-4 rounded-xl`}>
               <button className="w-fit mr-2 self-end" onClick={() => dispatch('quil')}><IoClose className="text-2xl "/></button>
-              <textarea onChange={(e) => dispatchQuils({type:'quilText', payload: e.target.value})}
+              <textarea value={quils.quilText} 
+              onChange={(e) => dispatchQuils({type:'quilText', payload: e.target.value})}
               className='rounded-md w-11/12 h-[10rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' 
               placeholder="What's on your mind?"/>
               <button className="border-2 border-black w-fit mx-auto px-4 rounded" 
-                      onClick={() => handleSendQuil(quils.quilText)}>Send</button>
+                      onClick={() => {
+                        handleSendQuil(quils.quilText, (log) => {
+                          setHomeFeed(log)
+                        });
+                        dispatchQuils({type:'quilText', payload: ''});
+                      }}>Send</button>
             </div>
           </div>
           <div className={`${buttons.imageState ? 'grid' : 'hidden'} dialog-bg absolute w-full h-full top-0 left-0 place-items-center`}>
             <div className={`${buttons.imageState ? 'flex' : 'hidden'} w-[90%] lg:w-[60%] xl:w-[40%] flex-col gap-2 bg-white py-4 rounded-xl`}>
               <button className="w-fit mr-2 self-end" onClick={() => dispatch('image')}><IoClose className="text-2xl "/></button>
-              <textarea onChange={(e) => dispatchQuils({type:'imageCaption', payload: e.target.value})} 
+              <textarea value={quils.imageCaption} onChange={(e) => dispatchQuils({type:'imageCaption', payload: e.target.value})} 
               className='rounded-md w-11/12 h-[5rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' 
               placeholder="Caption....."/>
               <input type='file' 
@@ -258,31 +264,51 @@ const Home = () => {
               className='rounded-md w-11/12 mx-auto resize-none bg-gray-200 border border-dashed border-black p-1'/>
               <div className=""></div>
               <button className="border-2 border-black w-fit mx-auto px-4 rounded" 
-                      onClick={() => handleSendImage(quils.imageCaption, quils.imageFile)}>Send</button>
+                      onClick={() => {
+                        handleSendImage(quils.imageCaption, quils.imageFile, (log) => {
+                          setHomeFeed(log)
+                        });
+                        dispatchQuils({type: 'imageFile', payload: ''})
+                        dispatchQuils({type: 'imageCaption', payload: ''})
+                      }}>Send</button>
             </div>
           </div>
           <div className={`${buttons.videoState ? 'grid' : 'hidden'} dialog-bg absolute w-full h-full top-0 left-0 place-items-center`}>
             <div className={`${buttons.videoState ? 'flex' : 'hidden'} w-[90%] lg:w-[60%] xl:w-[40%] flex-col gap-2 bg-white py-4 rounded-xl`}>
               <button className="w-fit mr-2 self-end" onClick={() => dispatch('video')}><IoClose className="text-2xl "/></button>
-              <textarea onChange={(e) => dispatchQuils({type:'videoCaption', payload: e.target.value})} 
+              <textarea value={quils.videoCaption} onChange={(e) => dispatchQuils({type:'videoCaption', payload: e.target.value})} 
               className='rounded-md w-11/12 h-[5rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' placeholder="Caption....."/>
               <input onChange={(e) => dispatchQuils({type:'videoFile', payload: e.target.files[0]})} 
               type='file' className='rounded-md w-11/12 mx-auto resize-none bg-gray-200 border border-dashed border-black p-1'/>
               <div className=""></div>
               <button className="border-2 border-black w-fit mx-auto px-4 rounded"
-                      onClick={() => handleSendVideo(quils.videoCaption, quils.videoFile)}>Send</button>
+                      onClick={() => {
+                              handleSendVideo(quils.videoCaption, quils.videoFile, (log) => {
+                                setHomeFeed(log)
+                              });
+                              dispatchQuils({type: 'videoFile', payload: ''})
+                              dispatchQuils({type: 'videoCaption', payload: ''})
+
+                            }}>Send</button>
             </div>
           </div>
           <div className={`${buttons.micState ? 'grid' : 'hidden'} dialog-bg absolute w-full h-full top-0 left-0 place-items-center`}>
             <div className={`${buttons.micState ? 'flex' : 'hidden'} w-[90%] lg:w-[60%] xl:w-[40%] flex-col gap-2 bg-white py-4 rounded-xl`}>
               <button className="w-fit mr-2 self-end" onClick={() => dispatch('mic')}><IoClose className="text-2xl "/></button>
-              <textarea onChange={(e) => dispatchQuils({type:'micCaption', payload: e.target.value})} 
+              <textarea value={quils.micCaption} onChange={(e) => dispatchQuils({type:'micCaption', payload: e.target.value})} 
               className='rounded-md w-11/12 h-[5rem] mx-auto resize-none bg-gray-200 border p-1 focus:outline-none' placeholder="Caption....."/>
               <input onChange={(e) => dispatchQuils({type:'micFile', payload: e.target.files[0]})}
               type='file' className='rounded-md w-11/12 mx-auto resize-none bg-gray-200 border border-dashed border-black p-1'/>
               <div className=""></div>
               <button className="border-2 border-black w-fit mx-auto px-4 rounded" 
-                      onClick={() => handleSendMic(quils.micCaption, quils.micFile)}>Send</button>
+                      onClick={() => {
+                              handleSendMic(quils.micCaption, quils.micFile, (log) => {
+                                setHomeFeed(log)
+                              });
+                              dispatchQuils({type: 'micFile', payload: ''})
+                              dispatchQuils({type: 'micCaption', payload: ''})
+
+                            }}>Send</button>
             </div>
           </div>
         </span>
@@ -292,4 +318,4 @@ const Home = () => {
 }
 
 
-export default privateRoute(Home);
+export default Home;

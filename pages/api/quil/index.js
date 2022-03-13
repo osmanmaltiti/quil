@@ -6,19 +6,21 @@ const quilHandler = async(req, res) => {
             try {
                 const { input } = req.body;
                 const response = await axios.post('http://localhost:5000/api/quil/newquil', { input });
-                res.send(response.data)
+                res.send(response.data);
             } catch (error) {
                 res.send(error.message);
                 res.end();
             }
+            break;
         case 'GET':
             try{
                 const response = await axios.get('http://localhost:5000/api/quil/feed');
-                res.send(response.data);
+                res.status(201).send(response.data);
             } catch(error) {
                 res.send(error.message);
                 res.end();
             }
+            break;
     }
 }
 

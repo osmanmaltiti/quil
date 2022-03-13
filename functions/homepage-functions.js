@@ -4,7 +4,7 @@ import { storage } from "../firebase/firebase";
 
 const useHomepage = () => {
     const handleSendQuil = async(quil, callback) => {
-        const { user } = JSON.parse(localStorage.getItem("currentUser"));
+        const user = JSON.parse(localStorage.getItem("currentUser"));
         let newQuil = `${quil} + Quil + ${null}`;
         const input = {
             quil: newQuil,
@@ -14,10 +14,11 @@ const useHomepage = () => {
             timestamp: "12/01/2021",
             profile: user.profile,
         }
-        await axios.post('http://localhost:3000/api/quil', {input})
+        const response = await axios.post('http://localhost:3000/api/quil', {input});
+        callback(response.data)
     }
     const handleSendImage = async(imageCaption, imageFile, callback) => {
-        const { user } = JSON.parse(localStorage.getItem("currentUser"));
+        const user = JSON.parse(localStorage.getItem("currentUser"));
         let { uid } = user;
         try {
             const storageRef = ref(storage, `users/${uid}/posts/${imageFile.name}`);
@@ -36,7 +37,8 @@ const useHomepage = () => {
                             timestamp: "12/01/2021",
                             profile: user.profile,
                         }
-                        await axios.post('http://localhost:3000/api/quil', {input})
+                        const response = await axios.post('http://localhost:3000/api/quil', {input})
+                        callback(response.data)
                     });
                 });
         } catch (error) {
@@ -44,7 +46,7 @@ const useHomepage = () => {
         }
     }
     const handleSendVideo = async(videoCaption, videoFile, callback) => {
-        const { user } = JSON.parse(localStorage.getItem("currentUser"));
+        const user = JSON.parse(localStorage.getItem("currentUser"));
         let { uid } = user;
         try {
             const storageRef = ref(storage, `users/${uid}/posts/${videoFile.name}`);
@@ -63,7 +65,8 @@ const useHomepage = () => {
                             timestamp: "12/01/2021",
                             profile: user.profile,
                         }
-                        await axios.post('http://localhost:3000/api/quil', {input})
+                        const response = await axios.post('http://localhost:3000/api/quil', {input})
+                        callback(response.data)
                     });
                 });
         } catch (error) {
@@ -71,7 +74,7 @@ const useHomepage = () => {
         }
     }
     const handleSendMic = async(micCaption, micFile, callback) => {
-        const { user } = JSON.parse(localStorage.getItem("currentUser"));
+        const user = JSON.parse(localStorage.getItem("currentUser"));
         let { uid } = user;
         try {
             const storageRef = ref(storage, `users/${uid}/posts/${micFile.name}`);
@@ -90,7 +93,8 @@ const useHomepage = () => {
                             timestamp: "12/01/2021",
                             profile: user.profile,
                         }
-                        await axios.post('http://localhost:3000/api/quil', {input})
+                        const response = await axios.post('http://localhost:3000/api/quil', {input})
+                        callback(response.data)
                     });
                 });
         } catch (error) {
