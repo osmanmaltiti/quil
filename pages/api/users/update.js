@@ -1,4 +1,4 @@
-import axios, { Axios } from 'axios';
+import axios from 'axios';
 
 const updateHandler = async(req, res) => {
     const { type } = req.query
@@ -31,20 +31,6 @@ const updateHandler = async(req, res) => {
                 { update })
             } catch (error) {
                 
-            }
-            break;
-        case 'profile photo':
-            try {
-                const { update } = req.body;
-            } catch (error) {
-
-            }
-            break;
-        case 'cover photo':
-            try {
-                const { update } = req.body;
-            } catch (error) {
-
             }
             break;
     }

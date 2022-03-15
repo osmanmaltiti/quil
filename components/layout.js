@@ -9,11 +9,11 @@ const Layout = ({children}) => {
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     setUser(currentUser);
-  }, []);
+  },[]);
 
   return (
     <div className='w-screen h-screen overflow-x-hidden font-mons'>
-      { lg ? <NavbarDesktop name={user.displayname} profile={user.profile}/> : <NavbarMobile/> }
+      { lg ? <NavbarDesktop name={user?.displayname} profile={user?.profile}/> : <NavbarMobile/> }
       { children }
     </div>
   )

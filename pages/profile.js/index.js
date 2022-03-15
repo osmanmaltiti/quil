@@ -5,6 +5,8 @@ import Card from "../../components/card";
 import privateRoute from '../../components/private-route';
 import { useDispatch, useSelector } from "react-redux";
 import { getUserQuils } from '../../redux/profile-slice';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { storage } from '../../firebase/firebase';
 
 const init = {
   editName: '', editBio: '',
@@ -55,18 +57,62 @@ const Profile = () => {
   }, [updated])
 
   const handleUpdate = async() => {
-    const newUpdate = {
-      uid: user.uid
-    };
-    update.editName !== '' ? newUpdate.name = update.editName : null;
-    update.editBio !== '' ? newUpdate.bio = update.editBio : null;
-    dispatch({type: 'reset'});
-    setOpen(!open);
-    const updateResponse = await axios.post('http://localhost:3000/api/users/update', 
+    if(update.editProfilePhoto !== ''){
+      const storageRef = ref(storage, `users/${user.uid}/profile/profilepicture`);
+      const uploadImage = uploadBytesResumable(storageRef, update.editProfilePhoto);
+      uploadImage.on("state_changed",
+          () => {},
+          (error) => console.log(error),
+          () => {
+            getDownloadURL(uploadImage.snapshot.ref)
+                .then(async(url) => {
+                    const profile = axios.post('http://localhost:5000/api/user/updateprofile', 
+                    {profile: url}, { headers: { uid: user.uid } })
+
+                    const quil = axios.patch('http://localhost:5000/api/quil/profile', 
+                    {profile: url}, { headers: { uid: user.uid } })
+                    
+                    const response = await axios.all([profile, quil]);
+                    console.log(response[0].data)
+                    localStorage.setItem("currentUser", JSON.stringify(response[0].data));
+                    setUpdated(response[0].statusText);
+                })
+          })
+    }
+
+    if(update.editCoverPhoto !== ''){
+      const storageRef = ref(storage, `users/${user.uid}/profile/coverpicture`);
+      const uploadImage = uploadBytesResumable(storageRef, update.editCoverPhoto);
+      uploadImage.on("state_changed",
+          () => {},
+          (error) => console.log(error),
+          () => {
+            getDownloadURL(uploadImage.snapshot.ref)
+                .then(async(url) => {
+                    const response = await axios.post('http://localhost:5000/api/user/updateprofile', 
+                        {cover: url}, { headers: { uid: user.uid } })
+                    localStorage.setItem("currentUser", JSON.stringify(response.data));
+                    setUpdated(response.statusText)
+                })
+          })
+    }
+
+    if(update.editName !== '' || update.editBio !== ''){
+      const newUpdate = {
+        uid: user.uid
+      };
+      update.editName !== '' ? newUpdate.name = update.editName : null;
+      update.editBio !== '' ? newUpdate.bio = update.editBio : null;
+      dispatch({type: 'reset'});
+      setOpen(!open);
+      const updateResponse = await axios.post('http://localhost:3000/api/users/update', 
       { update: newUpdate }, 
       { params: {type: 'profile update'} });
-    localStorage.setItem("currentUser", JSON.stringify(updateResponse.data));
-    setUpdated(updateResponse.statusText)
+      localStorage.setItem("currentUser", JSON.stringify(updateResponse.data));
+      
+      setUpdated(updateResponse.statusText)
+    }
+
   }
 
   const handlePasswordUpdate = async() => {
