@@ -22,10 +22,11 @@ const Home = () => {
   const [toggle, setToggle] = useState(false);
   const [stat] = useState(10);
   const { handleSendQuil, handleSendImage,
-          handleSendVideo, handleSendMic } = useHomepage();
+          handleSendVideo, handleSendMic, getRecommend } = useHomepage();
   const feed = useSelector(state => state.feed.quil);
   const [ homefeed, setHomeFeed ] = useState()
   const [user, setUser] = useState({});
+  const recommended = useSelector(state => state.feed.recommended);
 
   useEffect(() => {
       (async() => {
@@ -41,6 +42,7 @@ const Home = () => {
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     setUser(currentUser);
+    getRecommend();
   }, []);
 
   const search = () => state ? 'w-[15rem]' : 'w-0';
@@ -157,59 +159,17 @@ const Home = () => {
         <div className='hidden xl:flex p-2 px-3 w-full h-fit text-black shadow-lg rounded-xl bg-white flex-col'>
             <p className='text-lg mb-2 font-semibold'>People you may know</p>
             <div className='flex flex-col w-full gap-4'>
-                <div className='flex flex-row justify-center gap-2 w-full'>
-                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
-                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
-                        <p className=''>Spiderman</p>
-                        <p className='text-sm font-light'>@friendlyneighborhood</p>
-                    </span>
-                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
-                </div>
+                {recommended.map(item => 
+                  <div key={item.uid} className='flex flex-row justify-center gap-2 w-full'>
+                      <img className='h-[3rem] w-[3rem] rounded-full object-cover' src={item.profile}/>
+                      <span className='flex flex-col w-[75%] overflow-x-hidden'>
+                          <p className=''>{item.fullname}</p>
+                          <p className='text-sm font-light'>@{item.displayname}</p>
+                      </span>
+                      <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
+                  </div>)}
 
-                <div className='flex flex-row justify-center gap-2 w-full'>
-                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
-                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
-                        <p className=''>Spiderman</p>
-                        <p className='text-sm font-light'>@friendlyneighborhood</p>
-                    </span>
-                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
-                </div>
-
-                <div className='flex flex-row justify-center gap-2 w-full'>
-                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
-                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
-                        <p className=''>Spiderman</p>
-                        <p className='text-sm font-light'>@friendlyneighborhood</p>
-                    </span>
-                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
-                </div>
-
-                <div className='flex flex-row justify-center gap-2 w-full'>
-                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
-                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
-                        <p className=''>Spiderman</p>
-                        <p className='text-sm font-light'>@friendlyneighborhood</p>
-                    </span>
-                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
-                </div>
-
-                <div className='flex flex-row justify-center gap-2 w-full'>
-                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
-                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
-                        <p className=''>Spiderman</p>
-                        <p className='text-sm font-light'>@friendlyneighborhood</p>
-                    </span>
-                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
-                </div>
-
-                <div className='flex flex-row justify-center gap-2 w-full'>
-                    <img className='h-[3rem] w-[3rem] rounded-full object-cover' src='/spiderman-avi.jpg'/>
-                    <span className='flex flex-col w-[75%] overflow-x-hidden'>
-                        <p className=''>Spiderman</p>
-                        <p className='text-sm font-light'>@friendlyneighborhood</p>
-                    </span>
-                    <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
-                </div>
+                
             </div>
         </div>
 

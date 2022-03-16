@@ -73,11 +73,11 @@ const Profile = () => {
                     {profile: url}, { headers: { uid: user.uid } })
                     
                     const response = await axios.all([profile, quil]);
-                    console.log(response[0].data)
                     localStorage.setItem("currentUser", JSON.stringify(response[0].data));
                     setUpdated(response[0].statusText);
                 })
           })
+          setOpen(!open);
     }
 
     if(update.editCoverPhoto !== ''){
@@ -95,6 +95,7 @@ const Profile = () => {
                     setUpdated(response.statusText)
                 })
           })
+      setOpen(!open);
     }
 
     if(update.editName !== '' || update.editBio !== ''){

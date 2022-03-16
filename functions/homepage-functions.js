@@ -1,8 +1,12 @@
 import axios from "axios";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { useDispatch } from "react-redux";
 import { storage } from "../firebase/firebase";
+import { getRecommended } from "../redux/home-feed-slice";
 
 const useHomepage = () => {
+    const dispatch = useDispatch();
+
     const handleSendQuil = async(quil, callback) => {
         const user = JSON.parse(localStorage.getItem("currentUser"));
         let newQuil = `${quil} + Quil + ${null}`;
@@ -101,8 +105,12 @@ const useHomepage = () => {
             console.log('something went wrong')
         }
     }
+    const getRecommend = async() => {
+        const response = await axios.get('http://localhost:3000/api/users/recommended');
+        dispatch(getRecommended(response.data));
+    }
 
-    return { handleSendImage, handleSendMic, handleSendQuil, handleSendVideo }
+    return { handleSendImage, handleSendMic, handleSendQuil, handleSendVideo, getRecommend }
 }
 
 export default useHomepage;
