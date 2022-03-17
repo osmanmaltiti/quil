@@ -22,9 +22,9 @@ const Home = () => {
   const [toggle, setToggle] = useState(false);
   const [stat] = useState(10);
   const { handleSendQuil, handleSendImage,
-          handleSendVideo, handleSendMic, getRecommend } = useHomepage();
-  const feed = useSelector(state => state.feed.quil);
-  const [ homefeed, setHomeFeed ] = useState()
+          handleSendVideo, handleSendMic, 
+          getRecommend, mapQuils } = useHomepage();
+  const [ refresh, setRefresh ] = useState()
   const [user, setUser] = useState({});
   const recommended = useSelector(state => state.feed.recommended);
 
@@ -33,7 +33,7 @@ const Home = () => {
         const response = await axios.get('http://localhost:3000/api/quil');
         stateDispatch(getQuil(response.data))
       })()
-  }, [ homefeed ]);
+  }, [ refresh ]);
 
   useEffect(() => {
     toggle ? dispatch('open'): dispatch('close');
@@ -126,9 +126,7 @@ const Home = () => {
               </button>
               <button className='w-[95%] h-full flex gap-2 flex-row items-center justify-center px-2 bg-cyan-500 rounded-full border border-cyan-500 hover:scale-[1.02]' 
               onClick={() => {
-                        handleSendQuil(quils.quilText, (log) => {
-                          setHomeFeed(log)
-                        });
+                        handleSendQuil(quils.quilText, (log) => setRefresh(log));
                         dispatchQuils({type:'quilText', payload: ''})
                       }}>
                 <p>Send</p>
@@ -139,28 +137,15 @@ const Home = () => {
           {/* CARD-MAP */}
           <div id="quil-content" 
             className="card-map lg:shadow-lg bg-white border-2 border-[#ebebeb] rounded-2xl lg:rounded-b-none w-full flex-grow p-2 flex flex-col overflow-y-auto">
-                {
-                  feed?.map(item => 
-                    <Card
-                      key = {item._id}
-                      quil = {item.quil}
-                      profile = {item.user.profile}
-                      name = {item.user.fullname}
-                      displayname = {item.user.displayname}
-                      likes = {item.likes.length}
-                      unlikes = {item.unlikes.length}
-                      comments = {item.comments.length}
-                      timestamp = {item.timestamp}
-                    />)
-                }
+                { mapQuils(user.uid, (log) => setRefresh(log)) }
           </div>
         </div>
         {/* SUGGESTION-CARD */}
         <div className='hidden xl:flex p-2 px-3 w-full h-fit text-black shadow-lg rounded-xl bg-white flex-col'>
             <p className='text-lg mb-2 font-semibold'>People you may know</p>
             <div className='flex flex-col w-full gap-4'>
-                {recommended.map(item => 
-                  <div key={item.uid} className='flex flex-row justify-center gap-2 w-full'>
+                {recommended.map((item,index) => 
+                  <div key={index} className='flex flex-row justify-center gap-2 w-full'>
                       <img className='h-[3rem] w-[3rem] rounded-full object-cover' src={item.profile}/>
                       <span className='flex flex-col w-[75%] overflow-x-hidden'>
                           <p className=''>{item.fullname}</p>
@@ -206,9 +191,7 @@ const Home = () => {
               placeholder="What's on your mind?"/>
               <button className="border-2 border-black w-fit mx-auto px-4 rounded" 
                       onClick={() => {
-                        handleSendQuil(quils.quilText, (log) => {
-                          setHomeFeed(log)
-                        });
+                        handleSendQuil(quils.quilText, (log) =>setRefresh(log));
                         dispatchQuils({type:'quilText', payload: ''});
                       }}>Send</button>
             </div>
@@ -226,7 +209,7 @@ const Home = () => {
               <button className="border-2 border-black w-fit mx-auto px-4 rounded" 
                       onClick={() => {
                         handleSendImage(quils.imageCaption, quils.imageFile, (log) => {
-                          setHomeFeed(log)
+                          setRefresh(log)
                         });
                         dispatchQuils({type: 'imageFile', payload: ''})
                         dispatchQuils({type: 'imageCaption', payload: ''})
@@ -244,7 +227,7 @@ const Home = () => {
               <button className="border-2 border-black w-fit mx-auto px-4 rounded"
                       onClick={() => {
                               handleSendVideo(quils.videoCaption, quils.videoFile, (log) => {
-                                setHomeFeed(log)
+                                setRefresh(log)
                               });
                               dispatchQuils({type: 'videoFile', payload: ''})
                               dispatchQuils({type: 'videoCaption', payload: ''})
@@ -263,7 +246,7 @@ const Home = () => {
               <button className="border-2 border-black w-fit mx-auto px-4 rounded" 
                       onClick={() => {
                               handleSendMic(quils.micCaption, quils.micFile, (log) => {
-                                setHomeFeed(log)
+                                setRefresh(log)
                               });
                               dispatchQuils({type: 'micFile', payload: ''})
                               dispatchQuils({type: 'micCaption', payload: ''})

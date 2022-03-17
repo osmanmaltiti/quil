@@ -64,15 +64,15 @@ const Card = (props) => {
         <div className='w-full flex flex-row mt-1 border-y border-gray-300 py-2 text-lg px-4 lg:gap-12 justify-between'>
             <div className='flex flex-row gap-8'>
                 <span className='flex flex-row gap-2 items-center px-3 bg-gray-100 shadow-md  justify-center rounded'>
-                    <button><MdOutlineThumbUp/></button>
+                    <button onClick={props.like}><MdOutlineThumbUp/></button>
                     <p>{props.likes}</p>
                 </span>
                 <span className='flex flex-row gap-2 items-center px-3 bg-gray-100 shadow-md justify-center rounded'>
-                    <button><MdOutlineThumbDown/></button>
+                    <button onClick={props.unlike}><MdOutlineThumbDown/></button>
                     <p>{props.unlikes}</p>
                 </span>
                 <span className='flex flex-row gap-2 items-center px-3 bg-gray-100 shadow-md justify-center rounded'>
-                    <button><MdChatBubbleOutline/></button>
+                    <button onClick={props.comment}><MdChatBubbleOutline/></button>
                     <p>{props.comments}</p>
                 </span>
             </div>

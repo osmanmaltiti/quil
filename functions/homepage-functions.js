@@ -1,12 +1,34 @@
 import axios from "axios";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { storage } from "../firebase/firebase";
 import { getRecommended } from "../redux/home-feed-slice";
+import Card from "../components/card";
 
 const useHomepage = () => {
     const dispatch = useDispatch();
+    const quil = useSelector(state => state.feed.quil);
 
+    const mapQuils = (uid, callback) => {
+       return quil?.map(item => 
+            <Card key = {item._id}
+              quil = {item.quil}
+              profile = {item.user.profile}
+              name = {item.user.fullname}
+              displayname = {item.user.displayname}
+              likes = {item.likes.length}
+              unlikes = {item.unlikes.length}
+              comments = {item.comments.length}
+              timestamp = {item.timestamp}
+              like = {() => handleLike({qid: item._id, uid}, (log) => {
+                callback(log)
+              })}
+              unlike = {() => handleUnlike({qid: item._id, uid}, (log) => {
+                callback(log)
+              })}
+              comment = {() => handleComment({qid: item._id, likes: item.likes, uid})}
+            />)
+    }
     const handleSendQuil = async(quil, callback) => {
         const user = JSON.parse(localStorage.getItem("currentUser"));
         let newQuil = `${quil} + Quil + ${null}`;
@@ -109,8 +131,23 @@ const useHomepage = () => {
         const response = await axios.get('http://localhost:3000/api/users/recommended');
         dispatch(getRecommended(response.data));
     }
+    const handleLike = async(query, callback) => {
+        const response = await axios.patch('http://localhost:5000/api/quil/like', {...query});
+        response.data && callback(response.data);
+    }
+    const handleUnlike = async(query, callback) => {
+        const response = await axios.patch('http://localhost:5000/api/quil/unlike', {...query});
+        response.data && callback(response.data);
+    }
+    const handleComment = async(query, callback) => {
+        console.log(query)
+    }
 
-    return { handleSendImage, handleSendMic, handleSendQuil, handleSendVideo, getRecommend }
+    return { handleSendImage, handleSendMic, 
+             handleSendQuil, mapQuils,
+             handleSendVideo, getRecommend, 
+             handleLike,
+             handleUnlike, handleComment }
 }
 
 export default useHomepage;
