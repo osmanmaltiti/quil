@@ -23,7 +23,8 @@ const Home = () => {
   const [stat] = useState(10);
   const { handleSendQuil, handleSendImage,
           handleSendVideo, handleSendMic, 
-          getRecommend, mapQuils } = useHomepage();
+          getRecommend, mapQuils,
+          mapRecommended } = useHomepage();
   const [ refresh, setRefresh ] = useState()
   const [user, setUser] = useState({});
   const recommended = useSelector(state => state.feed.recommended);
@@ -43,7 +44,7 @@ const Home = () => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     setUser(currentUser);
     getRecommend();
-  }, []);
+  }, [ refresh ]);
 
   const search = () => state ? 'w-[15rem]' : 'w-0';
 
@@ -137,24 +138,14 @@ const Home = () => {
           {/* CARD-MAP */}
           <div id="quil-content" 
             className="card-map lg:shadow-lg bg-white border-2 border-[#ebebeb] rounded-2xl lg:rounded-b-none w-full flex-grow p-2 flex flex-col overflow-y-auto">
-                { mapQuils(user.uid, (log) => setRefresh(log)) }
+                { mapQuils(user?.uid, user?.profile, user?.displayname, (log) => setRefresh(log)) }
           </div>
         </div>
         {/* SUGGESTION-CARD */}
         <div className='hidden xl:flex p-2 px-3 w-full h-fit text-black shadow-lg rounded-xl bg-white flex-col'>
             <p className='text-lg mb-2 font-semibold'>People you may know</p>
             <div className='flex flex-col w-full gap-4'>
-                {recommended.map((item,index) => 
-                  <div key={index} className='flex flex-row justify-center gap-2 w-full'>
-                      <img className='h-[3rem] w-[3rem] rounded-full object-cover' src={item.profile}/>
-                      <span className='flex flex-col w-[75%] overflow-x-hidden'>
-                          <p className=''>{item.fullname}</p>
-                          <p className='text-sm font-light'>@{item.displayname}</p>
-                      </span>
-                      <button className='px-3 py-1 ml-2 rounded-full self-center h-fit bg-gray-400 text-black'>Follow</button>
-                  </div>)}
-
-                
+                { mapRecommended(recommended, user?.uid, (log) => setRefresh(log)) }
             </div>
         </div>
 
